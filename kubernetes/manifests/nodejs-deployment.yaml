@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-deployment
+  namespace: default
+  labels:
+    app: nodejs
+    version: v1
+    component: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nodejs
+  template:
+    metadata:
+      labels:
+        app: nodejs
+        version: v1
+        component: frontend
+    spec:
+      containers:
+      - name: nodejs
+        image: ${NODEJS_ECR_URI}:latest  # Will be replaced during deployment
+        ports:
+        - containerPort: 3000
+          name: http
+        env:
+        - name: FASTAPI_URL
+          value: "http://fastapi-service:8000"
+        - name: ENVIRONMENT
+          value: "stage4-v1"
+        - name: LOG_LEVEL
+          value: "INFO"
+        - name: NODE_ENV
+          value: "production"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "256m"
+          limits:
+            memory: "512Mi"
+            cpu: "512m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-service
+  namespace: default
+  labels:
+    app: nodejs
+    component: frontend
+spec:
+  selector:
+    app: nodejs
+  ports:
+  - port: 3000
+    targetPort: 3000
+    protocol: TCP
+    name: http
+  type: ClusterIP

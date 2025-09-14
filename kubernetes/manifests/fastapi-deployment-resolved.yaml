@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-deployment
+  namespace: default
+  labels:
+    app: fastapi
+    version: v1
+    component: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fastapi
+  template:
+    metadata:
+      labels:
+        app: fastapi
+        version: v1
+        component: backend
+    spec:
+      containers:
+      - name: fastapi
+        image: 211050572089.dkr.ecr.us-east-1.amazonaws.com/agentic-aws-stage4-v1-fastapi:latest  # Will be replaced during deployment
+        ports:
+        - containerPort: 8000
+          name: http
+        env:
+        - name: DATABASE_HOST
+          value: "agentic-aws-stage4-v1-primary.ckvaq6ye440c.us-east-1.rds.amazonaws.com"  # Will be replaced during deployment
+        - name: DATABASE_NAME
+          value: "stage4v1db"
+        - name: DATABASE_PORT
+          value: "5432"
+        - name: ENVIRONMENT
+          value: "stage4-v1"
+        - name: LOG_LEVEL
+          value: "INFO"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: database-secret
+              key: DATABASE_URL
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "256m"
+          limits:
+            memory: "512Mi"
+            cpu: "512m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-service
+  namespace: default
+  labels:
+    app: fastapi
+    component: backend
+spec:
+  selector:
+    app: fastapi
+  ports:
+  - port: 8000
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  type: ClusterIP

@@ -1,0 +1,12 @@
+name: stage4-v1-infrastructure
+description: EKS Fargate infrastructure for Stage4-v1 deployment
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: aws-typescript-eks
+      project: agentic-aws-stage4-v1
+      environment: stage4-v1

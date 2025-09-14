@@ -1,0 +1,23 @@
+{
+    "name": "stage4-v1-infrastructure",
+    "version": "1.0.0",
+    "description": "Pulumi infrastructure for Stage4-v1 EKS deployment",
+    "main": "index.ts",
+    "scripts": {
+        "build": "tsc",
+        "start": "pulumi up",
+        "preview": "pulumi preview",
+        "destroy": "pulumi destroy"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "@pulumi/aws": "^6.45.0",
+        "@pulumi/awsx": "^2.15.0",
+        "@pulumi/eks": "^2.7.0",
+        "@pulumi/kubernetes": "^4.5.0",
+        "@pulumi/pulumi": "^3.113.0"
+    }
+}

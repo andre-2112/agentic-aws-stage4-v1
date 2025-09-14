@@ -1,0 +1,26 @@
+config:
+  # Project configuration
+  stage4-v1-infrastructure:project-name: agentic-aws-stage4-v1
+  stage4-v1-infrastructure:environment: stage4-v1
+  # Network configuration
+  stage4-v1-infrastructure:vpc-cidr: 10.4.0.0/16
+  stage4-v1-infrastructure:availability-zones:
+    - us-east-1a
+    - us-east-1b
+  # Domain configuration
+  stage4-v1-infrastructure:domain-name: a-g-e-n-t-i-c.com
+  stage4-v1-infrastructure:subdomain: stage4-v1
+  # Database configuration
+  stage4-v1-infrastructure:db-instance-class: db.t3.micro
+  stage4-v1-infrastructure:db-allocated-storage: "20"
+  stage4-v1-infrastructure:db-name: stage4v1db
+  stage4-v1-infrastructure:db-backup-retention: "7"
+  # EKS/Pod configuration
+  stage4-v1-infrastructure:pod-cpu: 256m
+  stage4-v1-infrastructure:pod-memory: 512Mi
+  stage4-v1-infrastructure:desired-count: "2"
+  stage4-v1-infrastructure:min-capacity: "1"
+  stage4-v1-infrastructure:max-capacity: "5"
+  # Monitoring configuration
+  stage4-v1-infrastructure:log-retention-days: "30"
+  aws:region: us-east-1

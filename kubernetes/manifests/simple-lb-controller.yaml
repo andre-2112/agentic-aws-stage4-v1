@@ -26,6 +26,7 @@ spec:
         - --cluster-name=agentic-aws-stage4-v1-cluster
         - --ingress-class=alb
         - --aws-region=us-east-1
+        - --aws-vpc-id=vpc-04613864eee812bb7
         - --enable-shield=false
         - --enable-waf=false
         - --enable-wafv2=false
